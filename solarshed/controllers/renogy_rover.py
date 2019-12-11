@@ -26,6 +26,27 @@ CHARGING_STATE = {
     6: 'current limiting'
 }
 
+LOAD_MODE = {
+    0x00: 'sole_light_control',
+    0x01: 'delay_1_hr',
+    0x02: 'delay_2_hr',
+    0x03: 'delay_3_hr',
+    0x04: 'delay_4_hr',
+    0x05: 'delay_5_hr',
+    0x06: 'delay_6_hr',
+    0x07: 'delay_7_hr',
+    0x08: 'delay_8_hr',
+    0x09: 'delay_9_hr',
+    0x0A: 'delay_10_hr',
+    0x0B: 'delay_11_hr',
+    0x0C: 'delay_12_hr',
+    0x0D: 'delay_13_hr',
+    0x0E: 'delay_14_hr',
+    0x0F: 'manual',
+    0x10: 'debug',
+    0x11: 'always_on',
+}
+
 class RenogyRover(minimalmodbus.Instrument):
     """
     Communicates using the Modbus RTU protocol (via provided USB<->RS232 cable)
@@ -178,7 +199,15 @@ class RenogyRover(minimalmodbus.Instrument):
         register = self.read_register(57348)
         return BATTERY_TYPE.get(register)
 
+    def load_mode(self):
+        register = self.read_register(registeraddress=0xE01D)
+        return LOAD_MODE.get(register)
+
+    def set_load_mode(self, load_mode):
+        self.write_register(registeraddress=0xE01D, value=load_mode)
+
     #TODO: resume at 3.10 of spec
+
 
 if __name__ == "__main__":
     rover = RenogyRover('/dev/ttyUSB0', 1)
@@ -194,6 +223,7 @@ if __name__ == "__main__":
     print('Load Voltage: ', rover.load_voltage())
     print('Load Current: ', rover.load_current())
     print('Load Power: ', rover.load_power())
+    print('Load Mode: ', rover.load_mode())
     print('Charging Status: ', rover.charging_status_label())
     print('Solar Voltage: ', rover.solar_voltage())
     print('Solar Current: ', rover.solar_current())
