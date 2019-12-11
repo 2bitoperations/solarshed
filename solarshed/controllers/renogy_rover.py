@@ -210,10 +210,10 @@ class RenogyRover(minimalmodbus.Instrument):
                             value=load_mode.value)
 
     def set_load_on(self):
-        self.write_bit(registeraddress=0x010A, value=0x1)
+        self.write_register(registeraddress=0x010A, value=0x1)
 
     def set_load_off(self):
-        self.write_bit(registeraddress=0x010A, value=0x0)
+        self.write_register(registeraddress=0x010A, value=0x0)
 
 
 if __name__ == "__main__":
