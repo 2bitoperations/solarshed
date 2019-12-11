@@ -3,6 +3,7 @@ Driver for the Renogy Rover Solar Controller using the Modbus RTU protocol
 """
 
 import minimalmodbus
+from enum import Enum, unique
 
 minimalmodbus.BAUDRATE = 9600
 minimalmodbus.TIMEOUT = 0.5
@@ -25,6 +26,11 @@ CHARGING_STATE = {
     5: 'floating',
     6: 'current limiting'
 }
+
+@unique
+class LoadMode(Enum):
+    SOLE_LIGHT_CONTROL = 0x00
+    MANUAL = 0x0F
 
 LOAD_MODE = {
     0x00: 'sole_light_control',
@@ -201,7 +207,7 @@ class RenogyRover(minimalmodbus.Instrument):
 
     def load_mode(self):
         register = self.read_register(registeraddress=0xE01D)
-        return LOAD_MODE.get(register)
+        return LoadMode(register)
 
     def set_load_mode(self, load_mode):
         self.write_register(registeraddress=0xE01D, value=load_mode)
