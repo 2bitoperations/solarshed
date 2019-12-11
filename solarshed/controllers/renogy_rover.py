@@ -31,6 +31,22 @@ CHARGING_STATE = {
 class LoadMode(Enum):
     SOLE_LIGHT_CONTROL = 0x00
     MANUAL = 0x0F
+    DELAY_1_HR = 0x01
+    DELAY_2_HR = 0x02
+    DELAY_3_HR = 0x03
+    DELAY_4_HR = 0x04
+    DELAY_5_HR = 0x05
+    DELAY_6_HR = 0x06
+    DELAY_7_HR = 0x07
+    DELAY_8_HR = 0x08
+    DELAY_9_HR = 0x09
+    DELAY_10_HR = 0x0A
+    DELAY_11_HR = 0x0B
+    DELAY_12_HR = 0x0C
+    DELAY_13_HR = 0x0D
+    DELAY_14_HR = 0x0E
+    DEBUG = 0x10
+    ALWAYS_ON = 0x11
 
 LOAD_MODE = {
     0x00: 'sole_light_control',
@@ -209,14 +225,15 @@ class RenogyRover(minimalmodbus.Instrument):
         register = self.read_register(registeraddress=0xE01D)
         return LoadMode(register)
 
-    def set_load_mode(self, load_mode):
-        self.write_register(registeraddress=0xE01D, value=load_mode)
+    def set_load_mode(self, load_mode: LoadMode):
+        self.write_register(registeraddress=0xE01D, value=load_mode.value)
 
     #TODO: resume at 3.10 of spec
 
 
 if __name__ == "__main__":
     rover = RenogyRover('/dev/ttyUSB0', 1)
+    rover.set_load_mode(load_mode=LoadMode.ALWAYS_ON)
     print('Model: ', rover.model())
     print('Battery %: ', rover.battery_percentage())
     print('Battery Type: ', rover.battery_type())
