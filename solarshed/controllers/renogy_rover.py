@@ -205,24 +205,21 @@ class RenogyRover(minimalmodbus.Instrument):
         register = self.read_register(registeraddress=0xE01D)
         return LoadMode(register)
 
-    def load_on(self):
-        register = self.read_register(registeraddress=0x0001)
-        return register
-
     def set_load_mode(self, load_mode: LoadMode):
         self.write_register(registeraddress=0xE01D,
                             value=load_mode.value)
 
     def set_load_on(self):
-        self.write_bit(registeraddress=0x0001, value=1)
+        self.write_bit(registeraddress=0x010A, value=1)
 
-        def set_load_on(self):
-            self.write_bit(registeraddress=0x0001, value=0)
+    def set_load_off(self):
+        self.write_bit(registeraddress=0x010A, value=0)
 
 
 if __name__ == "__main__":
     rover = RenogyRover('/dev/ttyUSB0', 1)
     rover.set_load_mode(load_mode=LoadMode.ALWAYS_ON)
+    rover.set_load_on()
     print('Model: ', rover.model())
     print('Battery %: ', rover.battery_percentage())
     print('Battery Type: ', rover.battery_type())
@@ -236,7 +233,6 @@ if __name__ == "__main__":
     print('Load Current: ', rover.load_current())
     print('Load Power: ', rover.load_power())
     print('Load Mode: ', rover.load_mode())
-    print('Load On: ', rover.load_on())
     print('Charging Status: ', rover.charging_status_label())
     print('Solar Voltage: ', rover.solar_voltage())
     print('Solar Current: ', rover.solar_current())
