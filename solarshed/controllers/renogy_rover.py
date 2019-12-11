@@ -48,26 +48,6 @@ class LoadMode(Enum):
     DEBUG = 0x10
     ALWAYS_ON = 0x11
 
-LOAD_MODE = {
-    0x00: 'sole_light_control',
-    0x01: 'delay_1_hr',
-    0x02: 'delay_2_hr',
-    0x03: 'delay_3_hr',
-    0x04: 'delay_4_hr',
-    0x05: 'delay_5_hr',
-    0x06: 'delay_6_hr',
-    0x07: 'delay_7_hr',
-    0x08: 'delay_8_hr',
-    0x09: 'delay_9_hr',
-    0x0A: 'delay_10_hr',
-    0x0B: 'delay_11_hr',
-    0x0C: 'delay_12_hr',
-    0x0D: 'delay_13_hr',
-    0x0E: 'delay_14_hr',
-    0x0F: 'manual',
-    0x10: 'debug',
-    0x11: 'always_on',
-}
 
 class RenogyRover(minimalmodbus.Instrument):
     """
@@ -225,10 +205,19 @@ class RenogyRover(minimalmodbus.Instrument):
         register = self.read_register(registeraddress=0xE01D)
         return LoadMode(register)
 
-    def set_load_mode(self, load_mode: LoadMode):
-        self.write_register(registeraddress=0xE01D, value=load_mode.value)
+    def load_on(self):
+        register = self.read_register(registeraddress=0x0001)
+        return register
 
-    #TODO: resume at 3.10 of spec
+    def set_load_mode(self, load_mode: LoadMode):
+        self.write_register(registeraddress=0xE01D,
+                            value=load_mode.value)
+
+    def set_load_on(self):
+        self.write_bit(registeraddress=0x0001, value=1)
+
+        def set_load_on(self):
+            self.write_bit(registeraddress=0x0001, value=0)
 
 
 if __name__ == "__main__":
@@ -247,6 +236,7 @@ if __name__ == "__main__":
     print('Load Current: ', rover.load_current())
     print('Load Power: ', rover.load_power())
     print('Load Mode: ', rover.load_mode())
+    print('Load On: ', rover.load_on())
     print('Charging Status: ', rover.charging_status_label())
     print('Solar Voltage: ', rover.solar_voltage())
     print('Solar Current: ', rover.solar_current())
