@@ -206,20 +206,20 @@ class RenogyRover(minimalmodbus.Instrument):
         return LoadMode(register)
 
     def set_load_mode(self, load_mode: LoadMode):
-        self.write_register(registeraddress=0xE01D,
-                            value=load_mode.value)
+        print("setting load mode to: ", load_mode.value)
+        self.write_register(registeraddress=0xE01D, value=load_mode.value, functioncode=0x06)
 
     def set_load_on(self):
-        self.write_register(registeraddress=0x010A, value=0x1)
+        self.write_register(registeraddress=0x010A, value=0x1, functioncode=0x06)
 
     def set_load_off(self):
-        self.write_register(registeraddress=0x010A, value=0x0)
+        self.write_register(registeraddress=0x010A, value=0x0, functioncode=0x06)
 
 
 if __name__ == "__main__":
     rover = RenogyRover('/dev/ttyUSB0', 1)
     rover.set_load_mode(load_mode=LoadMode.ALWAYS_ON)
-    rover.set_load_on()
+    rover.set_load_off()
     print('Model: ', rover.model())
     print('Battery %: ', rover.battery_percentage())
     print('Battery Type: ', rover.battery_type())
